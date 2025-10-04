@@ -1,6 +1,6 @@
 # Rife-Trade 
-LLM + embeddings powered market insights dashboard — ingest news & price data, surface succinct trading-relevant insights and explainable signals.
 
+LLM + embeddings powered market insights dashboard — ingest news & price data, surface succinct trading-relevant insights and explainable signals.
 
 ## Overview
 Rife Trade is an AI-powered market analysis platform that combines real-time market data with sentiment analysis from news sources to provide actionable insights for traders and investors.
@@ -44,8 +44,6 @@ Rife Trade is an AI-powered market analysis platform that combines real-time mar
 ## License
 MIT
 
----
-
 ## Project outcome (what is in this repo skeleton)
 
 * `notebooks/RifeTrade_notebook.ipynb` — end-to-end notebook (data → embeddings → index → retrieval → results + mini backtest). *Skeleton included below.*
@@ -53,8 +51,6 @@ MIT
 * `data/sample_news.csv` — a tiny example dataset so the app works out-of-box.
 * `requirements.txt` — pip install list.
 * `README.md` — polished project description (this doc), demo script, and interview bullets.
-
----
 
 ## Architecture (high level)
 
@@ -66,12 +62,9 @@ MIT
 6. **Frontend** — Streamlit app that calls the retrieval + summarizer pipeline.
 7. **(Optional)** lightweight backtest of a simple sentiment rule on historical price data.
 
----
-
 ## Notebook skeleton (`notebooks/RifeTrade_notebook.ipynb`)
 
 * Cells:
-
   1. Title & imports
   2. Load sample data (or Kaggle dataset if you have it)
   3. EDA & quick charts
