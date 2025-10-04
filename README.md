@@ -1,140 +1,41 @@
-# autoRAG-n8n
+# Rife-Trade 
 
-> End-to-end no-code Retrieval-Augmented Generation (RAG) chat system using `n8n`, `Supabase`, and `Telegram` powered by `OpenRouter`.
-
-This repository contains two main automated workflows built using n8n:
-1. **Web Scraper → Chunk → Embed → Vector Store (Supabase)**
-2. **Telegram Chat → Embed Query → Vector Search → RAG → Response**
+LLM + embeddings powered market insights dashboard — ingest news & price data, surface succinct trading-relevant insights and explainable signals.
 
 ---
 
-## 📁 Folder Structure
+## Project outcome (what is in this repo skeleton)
 
-```
-autoRAG-n8n/
-├── workflows/                  # n8n export files
-│   ├── website_ingest.json     # Ingest workflow: URL → Vector DB
-│   └── telegram_chat_rag.json  # Telegram RAG chat workflow
-├── sql/
-│   └── create_rag_table.sql    # SQL to setup Supabase table
-├── env.template                # Template for required environment variables
-├── README.md                   # Project documentation
-├── challenges.md               # Document challenges & solutions
-└── demo/
-    └── demo.mp4                # Screen recording of the complete demo
-```
+* `notebooks/RifeTrade_notebook.ipynb` — end-to-end notebook (data → embeddings → index → retrieval → results + mini backtest). *Skeleton included below.*
+* `app/streamlit_app.py` — small Streamlit dashboard to demo: enter ticker → fetch price → retrieve top news → summarise → show signals.
+* `data/sample_news.csv` — a tiny example dataset so the app works out-of-box.
+* `requirements.txt` — pip install list.
+* `README.md` — polished project description (this doc), demo script, and interview bullets.
 
 ---
 
-## ⚙️ Setup Instructions
+## Architecture (high level)
 
-### Step 1: Clone the Repo
-```bash
-git clone https://github.com/<your-username>/autoRAG-n8n.git
-cd autoRAG-n8n
-```
-
-### Step 2: Configure Environment Variables
-Create a `.env` file using the provided template:
-```bash
-cp env.template .env
-```
-Edit `.env` and add your keys:
-```env
-OPENROUTER_API_KEY=sk-...
-SUPABASE_URL=https://xyzcompany.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=your-secret-key
-TELEGRAM_BOT_TOKEN=123456:ABC-DEF...
-```
-
-### Step 3: Set Up Supabase
-1. Create a new Supabase project
-2. Open SQL editor and run:
-```sql
--- from sql/create_rag_table.sql
-create extension if not exists "uuid-ossp";
-create extension if not exists vector;
-
-create table if not exists rag_documents (
-  id uuid primary key default uuid_generate_v4(),
-  source_url text not null,
-  chunk_index integer not null,
-  content text not null,
-  embedding vector(1536) not null
-);
-```
-
-### Step 4: Start n8n
-```bash
-n8n start
-```
-Or use Docker:
-```bash
-docker run -it --rm \
-  --name n8n \
-  -p 5678:5678 \
-  -v ~/.n8n:/home/node/.n8n \
-  n8nio/n8n
-```
-
-### Step 5: Import Workflows
-In n8n UI:
-- Import `workflows/website_ingest.json`
-- Import `workflows/telegram_chat_rag.json`
-
-Configure credentials as prompted:
-- `OpenRouter` (API Key)
-- `Supabase` (HTTP Header Auth)
-- `TelegramBot`
+1. **Data ingestion** — price via `yfinance`, news via NewsAPI / web-scraper or uploaded CSV.
+2. **Preprocessing** — simple text cleaning & timestamp alignment.
+3. **Embeddings & index** — `sentence-transformers` (all-MiniLM) → FAISS index.
+4. **Retrieval** — nearest-neighbours + filter by ticker/date.
+5. **LLM summarization / Q&A** — HF `pipeline('summarization')` or small instruction model.
+6. **Frontend** — Streamlit app that calls the retrieval + summarizer pipeline.
+7. **(Optional)** lightweight backtest of a simple sentiment rule on historical price data.
 
 ---
 
-## 🧪 How to Test
+## Notebook skeleton (`notebooks/RifeTrade_notebook.ipynb`)
 
-### Web Ingest Test
-- Go to the webhook URL exposed by the "Website Ingest" form node.
-- Submit a valid webpage URL.
-- Confirm chunks appear in Supabase’s `rag_documents` table.
+* Cells:
 
-### Telegram RAG Chat
-- Message your bot with a question relevant to the ingested content.
-- Bot will reply with an AI-generated answer using RAG.
+  1. Title & imports
+  2. Load sample data (or Kaggle dataset if you have it)
+  3. EDA & quick charts
+  4. Build embeddings (sentence-transformers)
+  5. Build FAISS index & retrieval examples
+  6. Summarization / LLM prompt examples
+  7. Simple backtest: turn a summarizer-sentiment into a long/flat rule and compute cumulative returns
+  8. Conclusions & next steps
 
----
-
-## 📹 Demo
-
-A full screen-recorded walk-through can be found at `demo/demo.mp4`.
-
----
-
-## 🧱 Built With
-- [n8n](https://n8n.io/) - No-code automation
-- [Supabase](https://supabase.com/) - Vector DB (via pgvector)
-- [OpenRouter](https://openrouter.ai/) - LLM API platform
-- [Telegram](https://core.telegram.org/bots/api) - Chat interface
-
----
-
-## 🧠 Challenges Faced (`challenges.md`)
-- Embedding format compatibility
-- Telegram webhook vs polling
-- n8n payload debugging & transformation quirks
-
----
-
-## 🚀 Future Enhancements
-- Add full support for PDF & DOCX ingestion
-- Enable Slack or WhatsApp integrations
-- Replace Supabase with Pinecone for enterprise scale
-- Add error workflows for logging failures
-
----
-
-## 🙌 Credits
-Made with ❤️ by Pranav | Inspired by autonomous agent stacks
-
----
-
-## 📘 License
-[MIT](LICENSE)
