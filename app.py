@@ -6,7 +6,7 @@ from utils.logger import log
 
 app = FastAPI(title="Rife Trade Backend", version="1.0")
 
-@app.get("/status", response_model=StatusResponse)
+@app.get("/", response_model=StatusResponse)
 def check_status():
     return status.check_services()
 

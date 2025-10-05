@@ -27,3 +27,4 @@ yfinance
 pandas
 textblob
 rich
+google-genai

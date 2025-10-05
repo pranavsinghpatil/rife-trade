@@ -8,15 +8,19 @@ class PriceResponse(BaseModel):
     time: datetime
 
 class SentimentResponse(BaseModel):
+    text: str
     sentiment: str
-    raw: str
+    confidence: float
+    model: str
 
 class HeadlinesResponse(BaseModel):
     headlines: List[dict]
 
+
 class StatusResponse(BaseModel):
     market: bool
     news: bool
+    sentiment: bool
     ollama: bool
 
 class HistoryResponse(BaseModel):
