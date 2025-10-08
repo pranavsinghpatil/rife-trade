@@ -3,8 +3,18 @@ from fastapi import FastAPI, Query
 from services import news, market, sentiment, status
 from models.schemas import PriceResponse, SentimentResponse, HeadlinesResponse, StatusResponse, HistoryResponse
 from utils.logger import log
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="Rife Trade Backend", version="1.0")
+
+# Allow frontend (React) access
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],  # Vite default
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/", response_model=StatusResponse)
 def check_status():
