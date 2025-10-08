@@ -4,6 +4,7 @@ from services import news, market, sentiment, status
 from models.schemas import PriceResponse, SentimentResponse, HeadlinesResponse, StatusResponse, HistoryResponse
 from utils.logger import log
 from fastapi.middleware.cors import CORSMiddleware
+from routes import data 
 
 app = FastAPI(title="Rife Trade Backend", version="1.0")
 
@@ -35,3 +36,5 @@ def get_price(ticker: str):
 @app.get("/history", response_model=HistoryResponse)
 def get_history(ticker: str, period: str = "1mo"):
     return market.get_history(ticker, period)
+
+app.include_router(data.router, prefix="/api")

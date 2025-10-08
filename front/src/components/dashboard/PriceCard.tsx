@@ -10,10 +10,20 @@ interface PriceCardProps {
 export const PriceCard = ({ ticker, price, change, changePercent }: PriceCardProps) => {
   const isPositive = change >= 0;
 
+  // Add loading state
+  if (price === undefined || change === undefined || changePercent === undefined) {
+    return (
+      <div className="space-y-2">
+        <div className="h-8 w-24 animate-pulse bg-muted rounded" />
+        <div className="h-10 w-32 animate-pulse bg-muted rounded" />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-2">
       <div className="flex items-center gap-2">
-        <span className="text-2xl font-bold text-foreground">{ticker}</span>
+        <span className="text-2xl font-bold text-foreground">{ticker || '--'}</span>
         {isPositive ? (
           <TrendingUp className="h-5 w-5 text-success" />
         ) : (
@@ -22,7 +32,7 @@ export const PriceCard = ({ ticker, price, change, changePercent }: PriceCardPro
       </div>
       <div className="space-y-1">
         <div className="text-3xl font-bold text-foreground">
-          ₹{price.toFixed(2)}
+          ₹{price?.toFixed?.(2) || '0.00'}
         </div>
         <div
           className={`text-sm font-medium ${
@@ -30,8 +40,8 @@ export const PriceCard = ({ ticker, price, change, changePercent }: PriceCardPro
           }`}
         >
           {isPositive ? "+" : ""}
-          {change.toFixed(2)} ({isPositive ? "+" : ""}
-          {changePercent.toFixed(2)}%)
+          {change?.toFixed?.(2) || '0.00'} ({isPositive ? "+" : ""}
+          {changePercent?.toFixed?.(2) || '0.00'}%)
         </div>
       </div>
     </div>

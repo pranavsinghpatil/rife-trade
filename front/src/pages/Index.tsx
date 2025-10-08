@@ -40,6 +40,8 @@ interface PriceDataPoint {
   confidence?: number;
 }
 
+const BACKEND_URL = "http://localhost:8000";
+
 // ========== MAIN COMPONENT ==========
 const Index = () => {
   const { toast } = useToast();
@@ -51,164 +53,113 @@ const Index = () => {
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
 
+  // Fetched data states
+  const [priceData, setPriceData] = useState<any>(null);
+  const [sentimentData, setSentimentData] = useState<any>(null);
+  const [headlines, setHeadlines] = useState<Headline[]>([]);
+  const [priceChartData, setPriceChartData] = useState<PriceDataPoint[]>([]);
+  const [sentimentDistribution, setSentimentDistribution] = useState<any[]>([]);
+  const [priceTableData, setPriceTableData] = useState<any[]>([]);
 
-  // Mock data
-  const priceData = {
-    ticker,
-    price: 2450.75,
-    change: 32.5,
-    changePercent: 1.34,
+  // ---------- Logger ----------
+  const addLog = (type: LogEntry["type"], message: string) => {
+    setLogs((prev) => [
+      ...prev,
+      { timestamp: new Date().toLocaleTimeString("en-US", { hour12: false }), type, message },
+    ].slice(-10));
   };
 
-  const sentimentData = {
-    sentiment: "positive" as const,
-    score: 0.72,
-  };
-
-  const headlines: Headline[] = [
-    {
-      title: "Reliance Industries announces major expansion in renewable energy sector",
-      sentiment: "positive",
-      confidence: 0.89,
-    },
-    {
-      title: "Market experts predict strong Q4 results for major conglomerates",
-      sentiment: "positive",
-      confidence: 0.76,
-    },
-    {
-      title: "Concerns raised over global supply chain disruptions affecting exports",
-      sentiment: "negative",
-      confidence: 0.68,
-    },
-  ];
-
-  const priceChartData: PriceDataPoint[] = [
-    { time: "09:15", price: 2418.25 },
-    { time: "09:30", price: 2422.5 },
-    { time: "09:45", price: 2428.75, sentiment: "positive", headline: headlines[0].title, confidence: 0.89 },
-    { time: "10:00", price: 2435.0 },
-    { time: "10:15", price: 2440.25, sentiment: "positive", headline: headlines[1].title, confidence: 0.76 },
-    { time: "10:30", price: 2438.5 },
-    { time: "10:45", price: 2442.0, sentiment: "negative", headline: headlines[2].title, confidence: 0.68 },
-    { time: "11:00", price: 2445.75 },
-    { time: "11:15", price: 2450.75 },
-  ];
-
-  const sentimentDistribution = [
-    { sentiment: "Positive", count: 15 },
-    { sentiment: "Negative", count: 5 },
-    { sentiment: "Neutral", count: 8 },
-  ];
-
-  const indianTickers = ["RELIANCE", "TCS", "INFY", "HDFC", "WIPRO"];
-  const globalTickers = ["AAPL", "MSFT", "GOOGL", "AMZN", "TSLA"];
-
-  const priceTableData = [
-    { date: "2025-10-01", price: 2418.25, change: -8.5, changePercent: -0.35 },
-    { date: "2025-10-02", price: 2435.0, change: 16.75, changePercent: 0.69 },
-    { date: "2025-10-03", price: 2442.0, change: 7.0, changePercent: 0.29 },
-    { date: "2025-10-04", price: 2450.75, change: 8.75, changePercent: 0.36 },
-    { date: "2025-10-05", price: 2465.25, change: 14.5, changePercent: 0.59 },
-    { date: "2025-10-06", price: 2458.0, change: -7.25, changePercent: -0.29 },
-  ];
-
-  // ========== AUTO REFRESH ==========
-  useEffect(() => {
-    let isMounted = true;
-
-    const fetchData = async () => {
-      if (!isMounted) return;
-
-      const timeStr = new Date().toLocaleTimeString("en-US", { hour12: false });
-      const log = (type: LogEntry['type'], message: string) => {
-        if (!isMounted) return;
-        setLogs(prev => [
-          ...prev,
-          { timestamp: new Date().toLocaleTimeString("en-US", { hour12: false }), type, message }
-        ].slice(-10));
-      };
-
-      try {
-        await log('info', `Fetching latest data for ${ticker}...`);
-
-        // Simulate API call
-        // const response = await fetch(`/api/data/${ticker}`);
-        // const data = await response.json();
-
-        // Simulate processing time
-        await new Promise(resolve => setTimeout(resolve, 500));
-
-        if (!isMounted) return;
-
-        await log('success', 'Price data updated');
-        await log('success', 'Sentiment analysis complete');
-        setLastUpdate(new Date());
-
-      } catch (error) {
-        if (isMounted) {
-          await log('error', `Failed to fetch data for ${ticker}: ${error instanceof Error ? error.message : 'Unknown error'}`);
-        }
-      }
-    };
-
-    // Initial fetch
-    fetchData();
-
-    // Set up interval
-    const interval = setInterval(fetchData, 60000);
-
-    // Cleanup
-    return () => {
-      isMounted = false;
-      clearInterval(interval);
-    };
-  }, [ticker]);
-
-  // ========== HANDLERS ==========
-  const handleManualRefresh = useCallback(async () => {
-    const now = new Date();
-    const log = (type: LogEntry['type'], message: string) => {
-      setLogs(prev => [
-        ...prev,
-        {
-          timestamp: new Date().toLocaleTimeString("en-US", { hour12: false }),
-          type,
-          message
-        }
-      ].slice(-10));
-    };
-
+  // ---------- Fetch Data ----------
+  const fetchAllData = useCallback(async () => {
     try {
-      await log('info', 'Manual refresh triggered');
+      addLog("info", `Fetching data for ${ticker}...`);
 
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 500));
+      // Price
+      const priceRes = await fetch(`${BACKEND_URL}/price?ticker=${ticker}`);
+      const priceJson = await priceRes.json();
+      if (priceJson?.price) {
+        setPriceData(priceJson);
+        addLog("success", "Price updated");
+      }
 
-      await log('success', 'Data refreshed successfully');
+      // Sentiment
+      const sentimentRes = await fetch(`${BACKEND_URL}/sentiment?text=${encodeURIComponent(ticker)} news today`);
+      const sentimentJson = await sentimentRes.json();
+      if (sentimentJson?.sentiment) {
+        setSentimentData(sentimentJson);
+        addLog("success", "Sentiment updated");
+      }
+
+      // Headlines
+      const headRes = await fetch(`${BACKEND_URL}/headlines?market=${market}`);
+      const headJson = await headRes.json();
+      if (headJson?.headlines) {
+        setHeadlines(headJson.headlines);
+        addLog("success", "Headlines updated");
+      }
+
+      // Price History
+      const historyRes = await fetch(`${BACKEND_URL}/history?ticker=${ticker}&period=${timeRange}`);
+      const historyJson = await historyRes.json();
+      if (historyJson?.history) {
+        const formatted = historyJson.history.map((item: any) => ({
+          time: item.time,
+          price: item.price,
+        }));
+        setPriceChartData(formatted);
+        setPriceTableData(formatted.map((d: any) => ({
+          date: d.time,
+          price: d.price,
+          change: 0,
+          changePercent: 0,
+        })));
+        addLog("success", "Price history loaded");
+      }
+
+      // Sentiment distribution mock (until backend supports it)
+      setSentimentDistribution([
+        { sentiment: "Positive", count: Math.floor(Math.random() * 20) + 10 },
+        { sentiment: "Negative", count: Math.floor(Math.random() * 10) + 5 },
+        { sentiment: "Neutral", count: Math.floor(Math.random() * 15) + 5 },
+      ]);
+
       setLastUpdate(new Date());
     } catch (error) {
-      await log('error', `Refresh failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      addLog("error", `Data fetch failed: ${(error as Error).message}`);
     }
-  }, []);
+  }, [ticker, market, timeRange]);
 
+  // ---------- Auto Refresh ----------
+  useEffect(() => {
+    fetchAllData();
+    const interval = setInterval(fetchAllData, 60000);
+    return () => clearInterval(interval);
+  }, [fetchAllData]);
+
+  // ---------- Handlers ----------
+  const handleManualRefresh = async () => {
+    addLog("info", "Manual refresh triggered");
+    await fetchAllData();
+    toast({ title: "Data Refreshed", description: "Latest data loaded successfully." });
+  };
 
   const handleCustomTickerSearch = () => {
     if (customTicker.trim()) {
       setTicker(customTicker.toUpperCase());
       setCustomTicker("");
+      addLog("info", `Switched to ${customTicker.toUpperCase()}`);
     }
   };
 
   const handlePredict = (period: string) => {
     toast({
       title: "⚠️ Prediction Disclaimer",
-      description: `Predicted value for the next ${period}. Based on historical + sentiment data. Please verify before decisions.`,
-      duration: 600,
+      description: `Predicted value for the next ${period}. Based on historical + sentiment data. Verify before decisions.`,
+      duration: 6000,
     });
   };
 
-  // ========== RETURN JSX ==========
+  // ---------- Render ----------
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <div className="flex-1 p-4 md:p-6 max-w-[1600px] mx-auto w-full">
@@ -255,22 +206,6 @@ const Index = () => {
             {/* TICKER */}
             <div className="flex items-center gap-2">
               <label className="text-xs font-medium text-muted-foreground">Ticker:</label>
-              <Select value={ticker} onValueChange={setTicker}>
-                <SelectTrigger className="w-[140px] h-8 text-sm">
-                  <SelectValue placeholder="Select Ticker" />
-                </SelectTrigger>
-                <SelectContent>
-                  {(market === "indian" ? indianTickers : globalTickers).map((t) => (
-                    <SelectItem key={t} value={t}>
-                      {t}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* SEARCH */}
-            <div className="flex items-center gap-1">
               <Input
                 placeholder="Search ticker..."
                 value={customTicker}
@@ -344,11 +279,11 @@ const Index = () => {
           <TabsContent value="overview" className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <InfoCard title="Current Price">
-                <PriceCard {...priceData} />
+                <PriceCard {...(priceData || { price: 0, ticker })} />
               </InfoCard>
 
               <InfoCard title="Market Sentiment">
-                <SentimentCard {...sentimentData} />
+                <SentimentCard {...(sentimentData || { sentiment: "neutral", score: 0 })} />
               </InfoCard>
 
               <InfoCard title="System Status">

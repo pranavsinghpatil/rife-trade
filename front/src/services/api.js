@@ -24,3 +24,10 @@ export const fetchHeadlines = async (market = "IN") => {
   const res = await fetch(`${API_BASE}/headlines?market=${market}`);
   return await res.json();
 };
+
+// src/services/api.js
+export const fetchAllData = async (ticker, period = "1mo") => {
+  const res = await fetch(`${API_BASE}/api/data?ticker=${ticker}&period=${period}`);
+  if (!res.ok) throw new Error("Failed to fetch combined data");
+  return await res.json();
+};
