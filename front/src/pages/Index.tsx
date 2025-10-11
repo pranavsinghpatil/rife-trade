@@ -47,7 +47,7 @@ const Index = () => {
   const { toast } = useToast();
 
   const [market, setMarket] = useState("indian");
-  const [ticker, setTicker] = useState("RELIANCE");
+  const [ticker, setTicker] = useState("RELIANCE.NS");
   const [customTicker, setCustomTicker] = useState("");
   const [timeRange, setTimeRange] = useState("1M");
   const [logs, setLogs] = useState<LogEntry[]>([]);
@@ -132,7 +132,7 @@ const Index = () => {
   // ---------- Auto Refresh ----------
   useEffect(() => {
     fetchAllData();
-    const interval = setInterval(fetchAllData, 60000);
+    const interval = setInterval(fetchAllData, 300000);
     return () => clearInterval(interval);
   }, [fetchAllData]);
 

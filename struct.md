@@ -1,4 +1,3 @@
-
 # Project Structure
 
 This document outlines the file and folder structure of the project, along with the role of each file.
@@ -12,7 +11,8 @@ D:\hacka\autoRAG-n8n\
 ├─── localhost_8080-Rife-Trade-Dashboard.jpeg # A screenshot of the Rife Trade Dashboard.
 ├─── README.md # Contains information about the project.
 ├─── requirements.txt # Lists the Python dependencies for the backend.
-├─── controllers/ # Likely contains backend logic for handling requests (currently empty).
+├─── struct.md # This file, outlining the project structure.
+├─── controllers/ # Contains backend logic for handling requests.
 ├─── front/
 │   ├─── bun.lockb # Lockfile for the Bun package manager.
 │   ├─── components.json # Configuration for UI components.
@@ -51,8 +51,58 @@ D:\hacka\autoRAG-n8n\
 │       │   │   ├─── SentimentCard.tsx # A card for displaying sentiment information.
 │       │   │   ├─── SentimentPieChart.tsx # A pie chart for visualizing sentiment data.
 │       │   │   ├─── SentimentSection.tsx # A section dedicated to sentiment analysis.
-│       │   │   └─── StatusLogCard.tsx # A card for displaying status logs.
+│       │   │   ├─── StatusLogCard.tsx # A card for displaying status logs.
+│       │   │   └─── SystemStatusCard.tsx # A card for displaying system status.
 │       │   └─── ui/ # Contains UI components from Shadcn.
+│       │       ├─── accordion.tsx
+│       │       ├─── alert-dialog.tsx
+│       │       ├─── alert.tsx
+│       │       ├─── aspect-ratio.tsx
+│       │       ├─── avatar.tsx
+│       │       ├─── badge.tsx
+│       │       ├─── breadcrumb.tsx
+│       │       ├─── button.tsx
+│       │       ├─── calendar.tsx
+│       │       ├─── card.tsx
+│       │       ├─── carousel.tsx
+│       │       ├─── chart.tsx
+│       │       ├─── checkbox.tsx
+│       │       ├─── collapsible.tsx
+│       │       ├─── command.tsx
+│       │       ├─── context-menu.tsx
+│       │       ├─── dialog.tsx
+│       │       ├─── drawer.tsx
+│       │       ├─── dropdown-menu.tsx
+│       │       ├─── form.tsx
+│       │       ├─── hover-card.tsx
+│       │       ├─── input-otp.tsx
+│       │       ├─── input.tsx
+│       │       ├─── label.tsx
+│       │       ├─── menubar.tsx
+│       │       ├─── navigation-menu.tsx
+│       │       ├─── pagination.tsx
+│       │       ├─── popover.tsx
+│       │       ├─── progress.tsx
+│       │       ├─── radio-group.tsx
+│       │       ├─── resizable.tsx
+│       │       ├─── scroll-area.tsx
+│       │       ├─── select.tsx
+│       │       ├─── separator.tsx
+│       │       ├─── sheet.tsx
+│       │       ├─── sidebar.tsx # Sidebar component for navigation.
+│       │       ├─── skeleton.tsx
+│       │       ├─── slider.tsx
+│       │       ├─── sonner.tsx
+│       │       ├─── switch.tsx
+│       │       ├─── table.tsx
+│       │       ├─── tabs.tsx
+│       │       ├─── textarea.tsx
+│       │       ├─── toast.tsx
+│       │       ├─── toaster.tsx
+│       │       ├─── toggle-group.tsx
+│       │       ├─── toggle.tsx
+│       │       ├─── tooltip.tsx
+│       │       └─── use-toast.ts
 │       ├─── hooks/
 │       │   ├─── use-mobile.tsx # A React hook to detect if the application is running on a mobile device.
 │       │   └─── use-toast.ts # A React hook for displaying toast notifications.
@@ -64,7 +114,8 @@ D:\hacka\autoRAG-n8n\
 │           └─── api.js # Handles API requests for the frontend.
 ├─── models/
 │   └─── schemas.py # Defines Pydantic schemas for data validation and serialization.
-├─── routes/ # Likely defines the API routes for the backend (currently empty).
+├─── routes/
+│   └─── data.py # Defines the API routes for the backend.
 ├─── services/
 │   ├─── market.py # Service for fetching market data.
 │   ├─── news.py # Service for fetching news articles.

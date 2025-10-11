@@ -1,3 +1,7 @@
+"use client";
+
+import SystemStatusCard from "@/components/dashboard/SystemStatusCard";
+
 export const Footer = () => {
   return (
     <footer className="border-t border-border/50 bg-muted/30 mt-16 backdrop-blur-sm">
@@ -31,10 +35,11 @@ export const Footer = () => {
             </a>
           </nav>
           
-          <div className="flex items-center gap-2 text-xs text-muted-foreground bg-accent/50 px-3 py-2 rounded-lg border border-primary/20">
+          {/* <div className="flex items-center gap-2 text-xs text-muted-foreground bg-accent/50 px-3 py-2 rounded-lg border border-primary/20">
             <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
             <span className="font-medium">Auto-refresh: 60s</span>
-          </div>
+          </div> */}
+          <SystemStatusCard />
         </div>
       </div>
     </footer>

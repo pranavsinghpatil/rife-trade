@@ -1,6 +1,6 @@
 interface SentimentCardProps {
-  sentiment: "positive" | "negative" | "neutral";
-  score: number;
+  sentiment?: "positive" | "negative" | "neutral";
+  score?: number;
 }
 
 export const SentimentCard = ({ sentiment, score }: SentimentCardProps) => {
@@ -10,12 +10,15 @@ export const SentimentCard = ({ sentiment, score }: SentimentCardProps) => {
         return "bg-success";
       case "negative":
         return "bg-destructive";
-      default:
+      case "neutral":
         return "bg-muted-foreground";
+      default:
+        return "bg-gray-500"; // fallback
     }
   };
 
   const getSentimentText = () => {
+    if (!sentiment) return "Unknown";
     return sentiment.charAt(0).toUpperCase() + sentiment.slice(1);
   };
 
@@ -28,7 +31,10 @@ export const SentimentCard = ({ sentiment, score }: SentimentCardProps) => {
         </span>
       </div>
       <div className="text-2xl font-bold text-foreground">
-        Score: {score.toFixed(2)}
+        Score:{" "}
+        {typeof score === "number" && !isNaN(score)
+          ? score.toFixed(2)
+          : "N/A"}
       </div>
       <div className="text-xs text-muted-foreground">
         Aggregated from latest news

@@ -14,6 +14,7 @@ def get_price(ticker: str) -> PriceResponse:
     )
 
 def get_history(ticker: str, period: str) -> HistoryResponse:
+    period = period.lower()  # ✅ ensures '1M' -> '1mo'
     data = yf.Ticker(ticker).history(period=period)
     prices = [{"date": str(idx.date()), "price": round(row["Close"], 2)} for idx, row in data.iterrows()]
     return HistoryResponse(ticker=ticker, history=prices)
