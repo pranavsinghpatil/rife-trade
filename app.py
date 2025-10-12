@@ -22,8 +22,9 @@ def check_status():
     return status.check_services()
 
 @app.get("/headlines", response_model=HeadlinesResponse)
-def get_headlines(market: str = "IN"):
-    return news.get_headlines(market)
+def get_headlines(market: str, query: str = None):
+    return news.get_headlines(market, query)
+
 
 @app.get("/sentiment", response_model=SentimentResponse)
 def analyze_sentiment(text: str = Query(..., min_length=5)):
@@ -38,3 +39,12 @@ def get_history(ticker: str, period: str = "1mo"):
     return market.get_history(ticker, period)
 
 app.include_router(data.router, prefix="/api")
+
+@app.get("/cache/clear")
+def clear_cache():
+    """
+    Manually clear all cached news data.
+    Useful during testing or development.
+    """
+    result = news.clear_news_cache()
+    return result

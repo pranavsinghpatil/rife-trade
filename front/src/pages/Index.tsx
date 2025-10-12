@@ -91,7 +91,9 @@ const Index = () => {
       }
 
       // Headlines
-      const headRes = await fetch(`${BACKEND_URL}/headlines?market=${market}`);
+      const headRes = await fetch(
+        `${BACKEND_URL}/headlines?market=${market}&query=${ticker}`
+      );
       const headJson = await headRes.json();
       if (headJson?.headlines) {
         setHeadlines(headJson.headlines);

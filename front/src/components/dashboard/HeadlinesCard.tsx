@@ -13,10 +13,10 @@ interface Headline {
 }
 
 interface HeadlinesCardProps {
-  headlines: Headline[];
+  headlines?: Headline[];
 }
 
-export const HeadlinesCard = ({ headlines }: HeadlinesCardProps) => {
+export const HeadlinesCard = ({ headlines = [] }: HeadlinesCardProps) => {
   const getSentimentVariant = (sentiment: string) => {
     switch (sentiment) {
       case "positive":
@@ -28,6 +28,14 @@ export const HeadlinesCard = ({ headlines }: HeadlinesCardProps) => {
     }
   };
 
+  if (!headlines.length) {
+    return (
+      <div className="flex items-center justify-center h-24 text-sm text-muted-foreground">
+        No headlines available
+      </div>
+    );
+  }
+
   return (
     <TooltipProvider>
       <div className="space-y-3">
@@ -35,7 +43,10 @@ export const HeadlinesCard = ({ headlines }: HeadlinesCardProps) => {
           <Tooltip key={index}>
             <TooltipTrigger asChild>
               <div className="flex items-start gap-2 cursor-pointer hover:bg-secondary/50 p-2 rounded-md transition-colors">
-                <Badge variant={getSentimentVariant(headline.sentiment)} className="mt-0.5 shrink-0">
+                <Badge
+                  variant={getSentimentVariant(headline.sentiment)}
+                  className="mt-0.5 shrink-0"
+                >
                   {headline.sentiment}
                 </Badge>
                 <p className="text-sm text-foreground line-clamp-2 flex-1">

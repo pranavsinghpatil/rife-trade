@@ -16,6 +16,9 @@ class SentimentResponse(BaseModel):
 class HeadlinesResponse(BaseModel):
     headlines: List[dict]
 
+class Headline(BaseModel):
+    title: str
+    source: Optional[str] = None
 
 class StatusResponse(BaseModel):
     market: bool
