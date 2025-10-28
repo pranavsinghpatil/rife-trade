@@ -154,8 +154,4 @@ All colors MUST be HSL.
   ::-webkit-scrollbar-thumb {
     @apply bg-border rounded-full;
   }
-
-  ::-webkit-scrollbar-thumb:hover {
-    @apply bg-muted-foreground/50;
-  }
 }

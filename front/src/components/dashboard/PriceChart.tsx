@@ -23,13 +23,21 @@ interface PriceChartProps {
 }
 
 export const PriceChart = ({ data }: PriceChartProps) => {
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const day = date.getDate();
+    const month = date.toLocaleString('default', { month: 'short' });
+    const year = date.getFullYear().toString().slice(-2);
+    return `${day} ${month}${year}`;
+  };
+
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
         <div className="bg-card border border-border p-3 rounded-md shadow-lg">
           <p className="text-sm font-semibold text-foreground">
-            Time: {data.time}
+            Data: {formatDate(data.date)}
           </p>
           <p className="text-sm text-foreground">Price: ₹{data.price}</p>
           {data.headline && (
@@ -66,6 +74,7 @@ export const PriceChart = ({ data }: PriceChartProps) => {
           style={{ fontSize: "11px", fontWeight: 500 }}
           tickLine={false}
           axisLine={{ stroke: "hsl(var(--border))" }}
+          tick={{ display: 'none' }}
         />
         <YAxis
           stroke="hsl(var(--muted-foreground))"

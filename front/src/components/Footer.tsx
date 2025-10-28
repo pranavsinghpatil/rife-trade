@@ -1,6 +1,6 @@
 "use client";
 
-import SystemStatusCard from "@/components/dashboard/SystemStatusCard";
+
 
 export const Footer = () => {
   return (
@@ -39,7 +39,7 @@ export const Footer = () => {
             <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
             <span className="font-medium">Auto-refresh: 60s</span>
           </div> */}
-          <SystemStatusCard />
+          
         </div>
       </div>
     </footer>
