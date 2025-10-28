@@ -1,10 +1,10 @@
 interface SentimentCardProps {
   sentiment?: "positive" | "negative" | "neutral";
-  score?: number;
+  confidence?: number;
   model?: string;
 }
 
-export const SentimentCard = ({ sentiment, score, model = "LLM" }: SentimentCardProps) => {
+export const SentimentCard = ({ sentiment, confidence, model = "LLM" }: SentimentCardProps) => {
   const getSentimentColor = () => {
     switch (sentiment) {
       case "positive":
@@ -34,8 +34,8 @@ export const SentimentCard = ({ sentiment, score, model = "LLM" }: SentimentCard
 
       <div className="text-2xl font-bold text-foreground">
         Score:{" "}
-        {typeof score === "number" && !isNaN(score)
-          ? score.toFixed(2)
+        {typeof confidence === "number" && !isNaN(confidence)
+          ? confidence.toFixed(2)
           : "N/A"}
       </div>
 

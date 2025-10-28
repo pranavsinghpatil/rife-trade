@@ -69,52 +69,44 @@ const Index = () => {
     ].slice(-10));
   };
 
-  // ---------- Fetch Data ----------
   const fetchAllData = useCallback(async () => {
     try {
       addLog("info", `Fetching data for ${ticker}...`);
 
-      // Price
-      const priceRes = await fetch(`${BACKEND_URL}/price?ticker=${ticker}`);
-      const priceJson = await priceRes.json();
-      if (priceJson?.price) {
-        setPriceData(priceJson);
-        addLog("success", "Price updated");
-      }
-
-      // Sentiment
-      const sentimentRes = await fetch(`${BACKEND_URL}/sentiment?text=${encodeURIComponent(ticker)} news today`);
-      const sentimentJson = await sentimentRes.json();
-      if (sentimentJson?.sentiment) {
-        setSentimentData(sentimentJson);
-        addLog("success", "Sentiment updated");
-      }
-
-      // Headlines
-      const headRes = await fetch(
-        `${BACKEND_URL}/headlines?market=${market}&query=${ticker}`
+      const res = await fetch(
+        `${BACKEND_URL}/api/data?ticker=${ticker}&period=${timeRange}&market_code=${
+          market === "indian" ? "in" : "us"
+        }`
       );
-      const headJson = await headRes.json();
-      if (headJson?.headlines) {
-        setHeadlines(headJson.headlines);
-        addLog("success", "Headlines updated");
-      }
+      const data = await res.json();
 
-      // Price History
-      const historyRes = await fetch(`${BACKEND_URL}/history?ticker=${ticker}&period=${timeRange}`);
-      const historyJson = await historyRes.json();
-      if (historyJson?.history) {
-        const formatted = historyJson.history.map((item: any) => ({
+      if (data) {
+        // Price
+        setPriceData({ price: data.price, ticker: data.ticker });
+        addLog("success", "Price updated");
+
+        // Sentiment
+        setSentimentData(data.sentiment);
+        addLog("success", "Sentiment updated");
+
+        // Headlines
+        setHeadlines(data.headlines);
+        addLog("success", "Headlines updated");
+
+        // Price History
+        const formatted = data.history.map((item: any) => ({
           time: item.time,
           price: item.price,
         }));
         setPriceChartData(formatted);
-        setPriceTableData(formatted.map((d: any) => ({
-          date: d.time,
-          price: d.price,
-          change: 0,
-          changePercent: 0,
-        })));
+        setPriceTableData(
+          formatted.map((d: any) => ({
+            date: d.time,
+            price: d.price,
+            change: 0,
+            changePercent: 0,
+          }))
+        );
         addLog("success", "Price history loaded");
       }
 
@@ -128,8 +120,13 @@ const Index = () => {
       setLastUpdate(new Date());
     } catch (error) {
       addLog("error", `Data fetch failed: ${(error as Error).message}`);
+      toast({
+        title: "Error Fetching Data",
+        description: (error as Error).message,
+        variant: "destructive",
+      });
     }
-  }, [ticker, market, timeRange]);
+  }, [ticker, market, timeRange, toast]);
 
   // ---------- Auto Refresh ----------
   useEffect(() => {
@@ -285,7 +282,7 @@ const Index = () => {
               </InfoCard>
 
               <InfoCard title="Market Sentiment">
-                <SentimentCard {...(sentimentData || { sentiment: "neutral", score: 0 })} />
+                <SentimentCard {...(sentimentData || { sentiment: "neutral", confidence: 0 })} />
               </InfoCard>
 
               <InfoCard title="System Status">

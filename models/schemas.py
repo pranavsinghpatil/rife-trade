@@ -13,12 +13,16 @@ class SentimentResponse(BaseModel):
     confidence: float
     model: str
 
-class HeadlinesResponse(BaseModel):
-    headlines: List[dict]
-
 class Headline(BaseModel):
     title: str
     source: Optional[str] = None
+    sentiment: Optional[str] = "neutral"
+    confidence: Optional[float] = 0.0
+    url: Optional[str] = None
+    published: Optional[str] = None
+
+class HeadlinesResponse(BaseModel):
+    headlines: List[Headline]
 
 class StatusResponse(BaseModel):
     market: bool
